@@ -1,0 +1,22 @@
+{
+  "name": "test-fabric",
+  "version": "1.0.0",
+  "description": "메디체인 패브릭 구성환경을 테스트 및 개발하기 위한 레포지토리",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MediCha-i-n/test_fabric.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MediCha-i-n/test_fabric/issues"
+  },
+  "homepage": "https://github.com/MediCha-i-n/test_fabric#readme",
+  "dependencies": {
+    "ipfs-http-client": "^46.0.1"
+  }
+}
