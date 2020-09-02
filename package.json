@@ -17,6 +17,5 @@
   },
   "homepage": "https://github.com/MediCha-i-n/test_fabric#readme",
   "dependencies": {
-    "ipfs-http-client": "^46.0.1"
   }
 }
