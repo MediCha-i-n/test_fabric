@@ -406,9 +406,7 @@ function deployCC() {
 
 # Tear down running network
 function networkDown() {
-  # stop org3 containers also in addition to org1 and org2, in case we were running sample to add org3
   docker-compose -f $COMPOSE_FILE_BASE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_CA down --volumes --remove-orphans
-  docker-compose -f $COMPOSE_FILE_COUCH_ORG3 -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
   # Don't remove the generated artifacts -- note, the ledgers are always removed
   if [ "$MODE" != "restart" ]; then
     # Bring down the network, deleting the volumes
@@ -456,11 +454,6 @@ COMPOSE_FILE_BASE=docker/docker-compose-test-net.yaml
 COMPOSE_FILE_COUCH=docker/docker-compose-couch.yaml
 # certificate authorities compose file
 COMPOSE_FILE_CA=docker/docker-compose-ca.yaml
-# use this as the docker compose couch file for org3
-COMPOSE_FILE_COUCH_ORG3=addOrg3/docker/docker-compose-couch-org3.yaml
-# use this as the default docker-compose yaml definition for org3
-COMPOSE_FILE_ORG3=addOrg3/docker/docker-compose-org3.yaml
-#
 # use go as the default language for chaincode
 CC_SRC_LANGUAGE="go"
 # Chaincode version
