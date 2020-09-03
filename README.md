@@ -82,9 +82,62 @@ vim .bashrc
 source .bashrc
 ```
 
+docker-compose 까지는 requisitesInstall.sh 이용
+```shell script
+chmod 777 /requisitesInstall.sh
+```
+
 1. Install sample & Copy Requirement
 
 ```shell script
 curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.2.0 1.4.7
 export PATH=<path to download location>/bin$PATH
+```
+
+2. Explorer Setting
+
+PostgreSQL, jq 설치
+```shell script
+sudo apt-get update
+sudo apt-get install postgresql postgresql-contrib jq
+sudo service postgresql status
+sudo service postgresql start
+sudo service postgresql stop
+
+sudo passwd postgres # postgres 접속 password
+sudo -u postgres psql
+
+postgres=# CREATE DATABASE fabricexplorer OWNER postgres;
+postgres=# alter user postgres with password '1234';
+```
+
+Clone
+```shell script
+git clone https://github.com/hyperledger/blockchain-explorer.git
+cd blockchain-explorer
+```
+
+네트워크 설정 파일
+
+app/explorerconfig.json
+
+app/platform/fabric/config.json
+
+app/platform/fabric/connection-profile/first-network.json
+
+수정 후 
+
+```shell script
+chmod -R 775 db/  # In app/persistence/fabric/postgreSQL/db
+cd blockchain-explorer/app/persistence/fabric/postgreSQL/db
+sudo -u postgres ./createdb.sh
+sudo -u postgres psql -c '\l'
+sudo -u postgres psql fabricexplorer -c '\d'
+
+cd blockchain-explorer
+./main.sh install
+./main.sh clean
+
+./start.sh
+./stop.sh
 ```
