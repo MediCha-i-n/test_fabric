@@ -96,48 +96,20 @@ export PATH=<path to download location>/bin$PATH
 
 2. Explorer Setting
 
-PostgreSQL, jq 설치
 ```shell script
-sudo apt-get update
-sudo apt-get install postgresql postgresql-contrib jq
-sudo service postgresql status
-sudo service postgresql start
-sudo service postgresql stop
+docker pull hyperledger/explorer
+docker pull hyperledger/explorer-db
 
-sudo passwd postgres # postgres 접속 password
-sudo -u postgres psql
+wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/examples/net1/config.json
+wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/examples/net1/connection-profile/first-network.json -P connection-profile
+wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/docker-compose.yaml
 
-postgres=# CREATE DATABASE fabricexplorer OWNER postgres;
-postgres=# alter user postgres with password '1234';
+# 네트워크 실행 후
+cp -r test_fabric/test-network/organizations/peerOrganizations docker-explorer/organizations/peerOrganizations
+cp -r test_fabric/test-network/organizations/ordererOrganizations docker-explorer/organizations/ordererOrganizations
+
+# 실행 - 8080 포트
+docker-compose up -d
+docker-compose down -v
 ```
 
-Clone
-```shell script
-git clone https://github.com/hyperledger/blockchain-explorer.git
-cd blockchain-explorer
-```
-
-네트워크 설정 파일
-
-app/explorerconfig.json
-
-app/platform/fabric/config.json
-
-app/platform/fabric/connection-profile/first-network.json
-
-수정 후 
-
-```shell script
-chmod -R 775 db/  # In app/persistence/fabric/postgreSQL/db
-cd blockchain-explorer/app/persistence/fabric/postgreSQL/db
-sudo -u postgres ./createdb.sh
-sudo -u postgres psql -c '\l'
-sudo -u postgres psql fabricexplorer -c '\d'
-
-cd blockchain-explorer
-./main.sh install
-./main.sh clean
-
-./start.sh
-./stop.sh
-```
