@@ -35,7 +35,7 @@ async function main() {
             },
             mspId: 'Org2MSP',
             type: 'X.509'
-        }
+        };
 
 
         await wallet.put(identityLabel,identity);
