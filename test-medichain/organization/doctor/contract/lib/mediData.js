@@ -16,11 +16,10 @@ const MedicalState = require('./../ledger-api/mediState.js');
 class MedicalData extends MedicalState {
 
     // MedicalData 에는
-    // doctor: 진단 의사 (의사 업로드 아니면 unknown), patientHash: 환자 개인 정보 해시,
+    // doctor: 진단 의사 (의사 업로드 아니면 unknown), patientHash: 환자 개인 정보 해시, enrollDateTime: 등록 시간
     // rawImgCID: 원본 이미지 CID, resultImgCID: 결과 이미지 CID
-    // timestamp: 시간 (UTC 기준)
     constructor(obj) {
-        super(MedicalData.getClass(), [obj.patientHash]);
+        super(MedicalData.getClass(), [obj.doctor, obj.patientHash]);
         Object.assign(this, obj);
     }
 
@@ -76,7 +75,7 @@ class MedicalData extends MedicalState {
     }
 
     /**
-     * Deserialize a state data to commercial paper
+     * Deserialize a state data to medical data
      * @param {Buffer} data to form back into the object
      */
     static deserialize(data) {
@@ -86,8 +85,8 @@ class MedicalData extends MedicalState {
     /**
      * Factory method to create a commercial paper object
      */
-    static createInstance(doctor, patientHash, enrollDateTime, rawImgCID, resultImgCID) {
-        return new MedicalData({ doctor, patientHash, enrollDateTime, rawImgCID, resultImgCID });
+    static createInstance(doctor, patientHash, enrollDateTime, rawImgCid, resultImgCid) {
+        return new MedicalData({ doctor, patientHash, enrollDateTime, rawImgCid, resultImgCid });
     }
 
     static getClass() {

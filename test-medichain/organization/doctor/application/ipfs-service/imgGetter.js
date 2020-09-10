@@ -1,10 +1,9 @@
 const fs = require('fs');
 const IpfsHttpClient = require('ipfs-http-client')
 
-const { globSource } = IpfsHttpClient
 const ipfs = IpfsHttpClient()
 
-async function getipfs(cid, filename){
+async function getIpfs(cid, filename){
     for await (const file of ipfs.get(cid)) {
         console.log(file.path)
 
@@ -16,14 +15,18 @@ async function getipfs(cid, filename){
             content.push(chunk)
         }
 
-        var buffers = []
+        const buffers = [];
 
         content.forEach(bufferlist => {
             buffers.push(bufferlist._bufs[0])
         });
 
-        var buf = Buffer.concat(buffers)
+        const buf = Buffer.concat(buffers);
 
         fs.writeFileSync(filename, buf, 'base64')
     }
 }
+
+module.exports = {
+    getIpfs,
+};

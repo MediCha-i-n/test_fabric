@@ -1,9 +1,12 @@
+'use strict';
+
 const IpfsHttpClient = require('ipfs-http-client');  // need a IPFS Daemon
+const fs = require('fs');
 
 const ipfs = IpfsHttpClient();
 
 
-async function addipfs(filename){
+async function addIpfs(filename){
     const addOptions = {
         timeout: 10000
     };
@@ -16,4 +19,7 @@ async function addipfs(filename){
     }
 }
 
-addipfs('./images/RA.bmp');
+// addIpfs('./images/RA.bmp');
+module.exports = {
+    addIpfs
+};

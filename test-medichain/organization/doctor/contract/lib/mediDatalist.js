@@ -25,10 +25,6 @@ class MedicalDatalist extends MedicalStateList {
     async getMedicalData(medicalKey) {
         return this.getState(medicalKey);
     }
-
-    async updateMedicalData(medicalData) {
-        return this.updateState(medicalData);
-    }
 }
 
 

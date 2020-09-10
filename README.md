@@ -113,3 +113,16 @@ docker-compose up -d
 docker-compose down -v
 ```
 
+3. Implement Blockchain
+
+Org1: Doctor, Org2: Patient
+
+enrollDoctor CA 관리자 아이디 등록
+```shell script
+node enrollUser.js id pw
+```
+
+addToDoctorWallet Client 아이디 등록
+```shell script
+node addToDoctorWallet.js id
+```
