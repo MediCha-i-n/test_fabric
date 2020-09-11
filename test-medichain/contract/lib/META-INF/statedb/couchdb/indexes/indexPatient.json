@@ -1,0 +1,5 @@
+{
+    "index": {"fields":["patientHash"]},
+    "name":"indexPatient",
+    "type":"json"
+}

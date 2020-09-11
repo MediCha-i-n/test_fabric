@@ -6,7 +6,7 @@
 
 'use strict';
 
-const mdContract = require('./lib/mediDatacontract');
+const MD = require('./lib/medichain');
 
-module.exports.MedicalData = mdContract;
-module.exports.contracts = [mdContract];
+module.exports.MD = MD;
+module.exports.contracts = [MD];
