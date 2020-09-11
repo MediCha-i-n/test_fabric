@@ -20,7 +20,7 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 const { Wallets, Gateway } = require('fabric-network');
-const MedicalData = require('../contract/lib/mediData');
+const MedicalData = require('../../../contract/lib/mediData');
 const { getIpfs } = require('./ipfs-service/imgGetter');
 
 // query program function

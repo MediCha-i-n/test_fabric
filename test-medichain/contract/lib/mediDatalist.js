@@ -7,14 +7,14 @@
 'use strict';
 
 // Utility class for collections of ledger states --  a state list
-const MedicalStateList = require('./../ledger-api/mediStatelist.js');
+const StateList = require('../ledger-api/statelist.js');
 
 const MedicalData = require('./mediData.js');
 
-class MedicalDatalist extends MedicalStateList {
+class MedicalDatalist extends StateList {
 
     constructor(ctx) {
-        super(ctx, 'org.medichainnet.medicalData');
+        super(ctx, 'org.medichainnet.medicaldata');
         this.use(MedicalData);
     }
 
@@ -24,6 +24,10 @@ class MedicalDatalist extends MedicalStateList {
 
     async getMedicalData(medicalKey) {
         return this.getState(medicalKey);
+    }
+
+    async updateMedicalData(medicalData) {
+        return this.updateState(medicalData);
     }
 }
 

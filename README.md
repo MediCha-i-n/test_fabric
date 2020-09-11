@@ -124,5 +124,5 @@ node enrollUser.js id pw
 
 addToDoctorWallet Client 아이디 등록
 ```shell script
-node addToDoctorWallet.js id
+node addToWallet.js id
 ```

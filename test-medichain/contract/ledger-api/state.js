@@ -10,15 +10,16 @@
  * State class. States have a class, unique key, and a lifecycle current state
  * the current state is determined by the specific subclass
  */
-class MedicalState {
+class State {
 
     /**
-     * @param {String|Object} class  An indentifiable class of the instance
-     * @param {keyParts[]} elements to pull together to make a key for the objects
+     * @param {String|Object} stateClass  An indentifiable class of the instance
+     * @param {String[]} keyParts[] elements to pull together to make a key for the objects
      */
     constructor(stateClass, keyParts) {
         this.class = stateClass;
-        this.key = MedicalState.makeKey(keyParts);
+        this.key = State.makeKey(keyParts);
+        this.currentState = null;
     }
 
     getClass() {
@@ -30,27 +31,27 @@ class MedicalState {
     }
 
     getSplitKey(){
-        return MedicalState.splitKey(this.key);
+        return State.splitKey(this.key);
     }
 
     serialize() {
-        return MedicalState.serialize(this);
+        return State.serialize(this);
     }
 
     /**
-     * Convert object to buffer containing JSON data serialization
-     * Typically used before putState()ledger API
-     * @param {Object} JSON object to serialize
-     * @return {buffer} buffer with the data to store
+     * JSON object를 data serialization을 포함한 버퍼로 변환
+     * putState() ledger API 전에 쓰임
+     * @param {JSON} object JSON object to serialize
+     * @return {Buffer} buffer with the data to store
      */
     static serialize(object) {
         return Buffer.from(JSON.stringify(object));
     }
 
     /**
-     * Deserialize object into one of a set of supported JSON classes
+     * Data를 JSON 클래스 집합 중 하나로 deserialize
      * i.e. Covert serialized data to JSON object
-     * Typically used after getState() ledger API
+     * getState() ledger API 이후에 쓰임
      * @param {data} data to deserialize into JSON object
      * @param (supportedClasses) the set of classes data can be serialized to
      * @return {json} json with the data to store
@@ -61,26 +62,24 @@ class MedicalState {
         if (!objClass) {
             throw new Error(`Unknown class of ${json.class}`);
         }
-        let object = new (objClass)(json);
-
-        return object;
+        return new (objClass)(json);
     }
 
     /**
      * Deserialize object into specific object class
      * Typically used after getState() ledger API
      * @param {data} data to deserialize into JSON object
+     * @param {Function} objClass 바꿀 클래스
      * @return {json} json with the data to store
      */
     static deserializeClass(data, objClass) {
         let json = JSON.parse(data.toString());
-        let object = new (objClass)(json);
-        return object;
+        return new (objClass)(json);
     }
 
     /**
-     * Join the keyParts to make a unififed string
-     * @param (String[]) keyParts
+     * Join the keyParts to make a unified string
+     * @param {String[]} keyParts
      */
     static makeKey(keyParts) {
         return keyParts.map(part => JSON.stringify(part)).join(':');
@@ -92,4 +91,4 @@ class MedicalState {
 
 }
 
-module.exports = MedicalState;
+module.exports = State;
