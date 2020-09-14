@@ -85,6 +85,7 @@ source .bashrc
 docker-compose 까지는 requisitesInstall.sh 이용
 ```shell script
 chmod 777 /requisitesInstall.sh
+chmod 777 test-medichain/organization/doctor/configuration/cli/monitordocker.sh
 ```
 
 1. Install sample & Copy Requirement
@@ -104,9 +105,9 @@ wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/ex
 wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/examples/net1/connection-profile/first-network.json -P connection-profile
 wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/docker-compose.yaml
 
-# 네트워크 실행 후
-cp -r test_fabric/test-network/organizations/peerOrganizations docker-explorer/organizations/peerOrganizations
-cp -r test_fabric/test-network/organizations/ordererOrganizations docker-explorer/organizations/ordererOrganizations
+# 네트워크 실행 후 (test_fabric 에서)
+cp -r test-network/organizations/peerOrganizations docker-explorer/organizations
+cp -r test-network/organizations/ordererOrganizations docker-explorer/organization
 
 # 실행 - 8080 포트
 docker-compose up -d
@@ -125,4 +126,55 @@ node enrollUser.js id pw
 addToDoctorWallet Client 아이디 등록
 ```shell script
 node addToWallet.js id
+```
+
+체인코드 배포
+```shell script
+# organization/doctor 에서
+exec bash
+source doctor.sh
+exec zsh
+peer lifecycle chaincode package cp.tar.gz --lang node --path ../../contract --label cp_0
+peer lifecycle chaincode install cp.tar.gz
+
+2020-09-15 02:13:51.680 KST [cli.lifecycle.chaincode] submitInstallProposal -> INFO 001 Installed remotely: response:<status:200 payload:"\nEcp_0:902515da4199224eae88b688aeb0c64c1a7d2622875b37cb4d8d8dfd1b309457\022\004cp_0" >
+2020-09-15 02:13:51.680 KST [cli.lifecycle.chaincode] submitInstallProposal -> INFO 002 Chaincode code package identifier: cp_0:902515da4199224eae88b688aeb0c64c1a7d2622875b37cb4d8d8dfd1b309457
+
+peer lifecycle chaincode queryinstalled
+
+Installed chaincodes on peer:
+Package ID: cp_0:902515da4199224eae88b688aeb0c64c1a7d2622875b37cb4d8d8dfd1b309457, Label: cp_0
+
+export PACKAGE_ID=cp_0:902515da4199224eae88b688aeb0c64c1a7d2622875b37cb4d8d8dfd1b309457
+peer lifecycle chaincode approveformyorg --orderer localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name medichain -v 0 --package-id $PACKAGE_ID --sequence 1 --tls --cafile $ORDERER_CA
+
+2020-09-15 02:18:10.353 KST [chaincodeCmd] ClientWait -> INFO 001 txid [2378792a689b54098eafa079f42308f46364ad75624ddf5b8f2edcbac44cdae8] committed with status (VALID) at
+```
+
+```shell script
+# organization/patient 에서
+exec bash
+source patient.sh
+exec zsh
+peer lifecycle chaincode package cp.tar.gz --lang node --path ../../contract --label cp_0
+peer lifecycle chaincode install cp.tar.gz
+
+2020-09-15 02:21:13.590 KST [cli.lifecycle.chaincode] submitInstallProposal -> INFO 001 Installed remotely: response:<status:200 payload:"\nEcp_0:902515da4199224eae88b688aeb0c64c1a7d2622875b37cb4d8d8dfd1b309457\022\004cp_0" >
+2020-09-15 02:21:13.590 KST [cli.lifecycle.chaincode] submitInstallProposal -> INFO 002 Chaincode code package identifier: cp_0:902515da4199224eae88b688aeb0c64c1a7d2622875b37cb4d8d8dfd1b309457
+
+peer lifecycle chaincode queryinstalled
+
+Installed chaincodes on peer:
+Package ID: cp_0:902515da4199224eae88b688aeb0c64c1a7d2622875b37cb4d8d8dfd1b309457, Label: cp_0
+
+export PACKAGE_ID=cp_0:902515da4199224eae88b688aeb0c64c1a7d2622875b37cb4d8d8dfd1b309457
+peer lifecycle chaincode approveformyorg --orderer localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name medichain -v 0 --package-id $PACKAGE_ID --sequence 1 --tls --cafile $ORDERER_CA
+
+2020-09-15 02:22:14.555 KST [chaincodeCmd] ClientWait -> INFO 001 txid [50117ad845a4d633f9f9180421de68648ca04d84466cdf975c9a311356cb5c89] committed with status (VALID) at
+
+peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --peerAddresses localhost:7051 --tlsRootCertFiles ${PEER0_ORG1_CA} --peerAddresses localhost:9051 --tlsRootCertFiles ${PEER0_ORG2_CA} --channelID mychannel --name medichain -v 0 --sequence 1 --tls --cafile $ORDERER_CA --waitForEvent
+2020-09-15 02:23:44.182 KST [chaincodeCmd] ClientWait -> INFO 001 txid [d541cbd2075be1e0763b410bde42970825ae5ec19cd4df767d55ae5f51ca9121] committed with status (VALID) at localhost:7051
+2020-09-15 02:23:44.196 KST [chaincodeCmd] ClientWait -> INFO 002 txid [d541cbd2075be1e0763b410bde42970825ae5ec19cd4df767d55ae5f51ca9121] committed with status (VALID) at localhost:9051
+
+peer chaincode query -C mychannel -n medichain -c '{"Args":["PatientHashExists","123"]}'
 ```
