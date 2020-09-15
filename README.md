@@ -106,8 +106,12 @@ wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/ex
 wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/docker-compose.yaml
 
 # 네트워크 실행 후 (test_fabric 에서)
+cd docker-explorer & mkdir organization
 cp -r test-network/organizations/peerOrganizations docker-explorer/organizations
-cp -r test-network/organizations/ordererOrganizations docker-explorer/organization
+cp -r test-network/organizations/ordererOrganizations docker-explorer/organizations
+
+cd docker-explorer
+vim connection-profile/first-network.json
 
 # 실행 - 8080 포트
 docker-compose up -d
