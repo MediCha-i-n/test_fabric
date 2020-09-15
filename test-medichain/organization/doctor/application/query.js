@@ -10,7 +10,7 @@
  * 2. Connect to network gateway
  * 3. Access MedichainNet network
  * 4. Construct request to query medical data
- * 5. Submit transaction
+ * 5. Evaluate transaction
  * 6. Process response
  */
 
@@ -20,8 +20,6 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 const { Wallets, Gateway } = require('fabric-network');
-const MedicalData = require('../../../contract/lib/mediData');
-const { getIpfs } = require('./ipfs-service/imgGetter');
 
 // query program function
 async function query(doctorId, patientHash) {
@@ -56,25 +54,21 @@ async function query(doctorId, patientHash) {
         const network = await gateway.getNetwork('mychannel');
 
         // Get addressability to commercial paper contract
-        console.log('Use org.medichainnet.medicaldata smart contract.');
-        const contract = await network.getContract('medicaldatacontract');
+        console.log('Use org.medichainnet.medichain smart contract.');
+        const contract = await network.getContract('medichain');
 
         // query medical data
-        console.log('Evaluate medical data query transaction.');
-        const queryResponse = await contract.evaluateTransaction('query', patientHash);
+        console.log('Evaluate patientHash Data query transaction.');
+        const queryResponse = await contract.evaluateTransaction('GetPatientHashHistory', patientHash);
 
         // process response
         console.log('Process query transaction response.' + queryResponse);
-        let medicalData = MedicalData.fromBuffer(queryResponse);
-        console.log(`${medicalData.doctor} upload : ${medicalData.patientHash} successfully query`);
+        const queryData = JSON.parse(queryResponse.toString());
+        console.log(queryData);
+
         console.log('Transaction complete.');
-
-        // Find IPFS Img
-        medicalData.rawImgPath = await getIpfs(medicalData.rawImgCid);
-        medicalData.resultImgPath = await getIpfs(medicalData.resultImgCid);
-
         // return data
-        return medicalData;
+        return queryData;
     } catch (error) {
         console.log(`Error processing transaction. ${error}`);
         console.log(error.stack);

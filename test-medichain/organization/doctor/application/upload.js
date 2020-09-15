@@ -20,11 +20,9 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 const { Wallets, Gateway } = require('fabric-network');
-const MedicalData = require('../../../contract/lib/mediData');
-const { addIpfs } = require('./ipfs-service/imgAdder');
 
 // upload program function
-async function upload(doctorId, patientHash, rawImgPath, resultImgPath) {
+async function upload(doctorId, patientHash, rawImgCid, resultImgCid) {
 
     // A wallet stores a collection of identities for use
     const wallet = await Wallets.newFileSystemWallet(`../identity/user/${doctorId}/wallet`);
@@ -34,7 +32,6 @@ async function upload(doctorId, patientHash, rawImgPath, resultImgPath) {
 
     // Main try/catch block
     try {
-
         // Specify userName for network access
         // const userName = 'doctorId@doctor.com';
         // Load connection profile; will be used to locate a gateway
@@ -56,22 +53,18 @@ async function upload(doctorId, patientHash, rawImgPath, resultImgPath) {
         const network = await gateway.getNetwork('mychannel');
 
         // Get addressability to commercial paper contract
-        console.log('Use org.medichainnet.medicaldata smart contract.');
-        const contract = await network.getContract('medicaldatacontract');
-
-        // upload Image to IPFS
-        console.log('Upload medical data to IPFS');
-        const rawImgCid = await addIpfs(rawImgPath);
-        const resultImgCid = await addIpfs(resultImgPath);
+        console.log('Use org.medichainnet.medichain smart contract.');
+        const contract = await network.getContract('medichain');
 
         // upload medical data
         console.log('Submit medical data upload transaction.');
-        const uploadResponse = await contract.submitTransaction('upload', doctorId, patientHash, new Date().toISOString(), rawImgCid, resultImgCid);
+        const uploadResponse = await contract.submitTransaction('UploadPatientHash', doctorId, patientHash, rawImgCid, resultImgCid);
 
         // process response
         console.log('Process upload transaction response.' + uploadResponse);
-        let medicalData = MedicalData.fromBuffer(uploadResponse);
-        console.log(`${medicalData.doctor} upload : ${medicalData.patientHash} successfully uploaded`);
+        let patientData = Buffer.from(JSON.stringify(uploadResponse));
+
+        console.log(patientData);
         console.log('Transaction complete.');
     } catch (error) {
         console.log(`Error processing transaction. ${error}`);

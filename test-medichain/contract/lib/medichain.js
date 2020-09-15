@@ -3,10 +3,16 @@
 const { Contract } = require('fabric-contract-api');
 
 class Medichain extends Contract {
+    // PatientDataExists returns true when patient hash exists in world state
+    async PatientHashExists(ctx, patientHash) {
+        // Check if medical data already exists
+        let medicalDataState = await ctx.stub.getState(patientHash);
+        return medicalDataState && medicalDataState.length > 0;
+    }
 
     // Create - create a new medical data
-    async CreateMedicalData(ctx, patientHash, enrollNumber, doctorID, rawImgCID, resultImgCID) {
-        const exists = await this.MedicalDataExists(ctx, patientHash);
+    async CreatePatientHash(ctx, patientHash) {
+        const exists = await this.PatientHashExists(ctx, patientHash);
         if (exists) {
             throw new Error(`The patient ${patientHash} already exists`);
         }
@@ -14,10 +20,10 @@ class Medichain extends Contract {
         // Create Medical Data object and marshal to JSON
         let medicalData = {
             patientHash: patientHash,
-            enrollNumber: enrollNumber,
-            doctorID: doctorID,  // 의사 번호
-            rawImgCID: rawImgCID,
-            resultImgCID: resultImgCID,
+            enrollNumber: 0,
+            doctorID: 0,  // 의사 번호
+            rawImgCID: '', // 원본이미지 CID
+            resultImgCID: '', // 결과이미지 CID
         };
 
         // Save medical data to state
@@ -25,10 +31,11 @@ class Medichain extends Contract {
     }
 
     // Upload New Result
-    async UploadMedicalData(ctx, patientHash, doctorID, rawImgCID, resultImgCID) {
+    async UploadPatientHash(ctx, patientHash, doctorID, rawImgCID, resultImgCID) {
         let medicalDataAsBytes = await ctx.stub.getState(patientHash);
         if (!medicalDataAsBytes || !medicalDataAsBytes.toString()) {
-            throw new Error(`Patient Hash ${patientHash} does not exist`);
+            console.log(`Patient Hash ${patientHash} does not exist`);
+            medicalDataAsBytes = await this.CreatePatientHash(ctx, patientHash);
         }
         let medicalDataUpdate = {};
         try {
@@ -47,24 +54,21 @@ class Medichain extends Contract {
         await ctx.stub.putState(patientHash, medicalDataJSONasBytes);
     }
 
-    async GetMedicalDataHistory(ctx, patientHash) {
+    async GetPatientHashHistory(ctx, patientHash) {
+        const exists = await this.PatientHashExists(ctx, patientHash);
+        if (exists) {
+            throw new Error(`The patient ${patientHash} already exists`);
+        }
         let resultsIterator = await ctx.stub.getHistoryForKey(patientHash);
-        let results = await this.GetAllMedicalData(resultsIterator, true);
+        let results = await this.GetAllResults(resultsIterator, true);
 
         return JSON.stringify(results);
     }
 
-    // MedicalDataExists returns true when medical data with given ID exists in world state
-    async PatientHashExists(ctx, patientHash) {
-        // Check if medical data already exists
-        let medicalDataState = await ctx.stub.getState(patientHash);
-        return medicalDataState && medicalDataState.length > 0;
-    }
-
-    async GetAllMedicalData(iterator, isHistory) {
+    async GetAllResults(iterator, isHistory) {
         let allResults = [];
         let res = await iterator.next();
-        while(!res.done) {
+        while (!res.done) {
             if (res.value && res.value.value.toString()) {
                 let jsonRes = {};
                 console.log(res.value.value.toString('utf8'));
