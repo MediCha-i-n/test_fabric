@@ -58,7 +58,7 @@ async function upload(doctorId, patientHash, rawImgCid, resultImgCid) {
 
         // upload medical data
         console.log('Submit medical data upload transaction.');
-        const uploadResponse = await contract.submitTransaction('UploadPatientHash', doctorId, patientHash, rawImgCid, resultImgCid);
+        const uploadResponse = await contract.submitTransaction('UploadPatientHash', patientHash, doctorId, rawImgCid, resultImgCid);
 
         // process response
         console.log('Process upload transaction response.' + uploadResponse);
@@ -77,7 +77,7 @@ async function upload(doctorId, patientHash, rawImgCid, resultImgCid) {
     return true;
 }
 
-// Node 로 실행 시 인자값 - doctorId, patientHash, rawImg PATH, resultImg PATH
+// Node 로 실행 시 인자값 - doctorId, patientHash, rawImgCID, resultImgCID
 upload(process.argv[2], process.argv[3], process.argv[4], process.argv[5]).then(() => {
     console.log('Upload program complete.');
 }).catch((e) => {

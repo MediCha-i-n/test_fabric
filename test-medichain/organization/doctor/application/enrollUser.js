@@ -12,7 +12,7 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
 
-async function main(doctorId, doctorPw) {
+async function main(doctorId) {
     try {
         // load the network configuration
         let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org1.yaml', 'utf8'));
@@ -35,7 +35,7 @@ async function main(doctorId, doctorPw) {
         }
 
         // Enroll the admin user, and import the new identity into the wallet.
-        const enrollment = await ca.enroll({ enrollmentID: doctorId, enrollmentSecret: doctorPw });
+        const enrollment = await ca.enroll({ enrollmentID: 'user1', enrollmentSecret: 'user1pw' });
         const x509Identity = {
             credentials: {
                 certificate: enrollment.certificate,
@@ -54,4 +54,4 @@ async function main(doctorId, doctorPw) {
 }
 
 // Node 로 실행할 때 인자값 (doctor id, pw)
-main(process.argv[2], process.argv[3]);
+main(process.argv[2]);
