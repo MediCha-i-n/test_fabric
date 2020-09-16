@@ -12,7 +12,7 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
 
-async function main(patientId) {
+async function main() {
     try {
         // load the network configuration
         let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org2.yaml', 'utf8'));
@@ -23,12 +23,12 @@ async function main(patientId) {
         const ca = new FabricCAServices(caInfo.url, { trustedRoots: caTLSCACerts, verify: false }, caInfo.caName);
 
         // Create a new file system based wallet for managing identities.
-        const walletPath = path.join(process.cwd(), `../identity/user/${patientId}/wallet`);
+        const walletPath = path.join(process.cwd(), '../identity/user/patientAdmin/wallet');
         const wallet = await Wallets.newFileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
         // Check to see if we've already enrolled the admin user.
-        const userExists = await wallet.get(patientId);
+        const userExists = await wallet.get('patientAdmin');
         if (userExists) {
             console.log('An identity for the client user "user1" already exists in the wallet');
             return;
@@ -44,11 +44,11 @@ async function main(patientId) {
             mspId: 'Org2MSP',
             type: 'X.509',
         };
-        await wallet.put(patientId, x509Identity);
-        console.log(`Successfully enrolled client user "${patientId}" and imported it into the wallet`);
+        await wallet.put('patientAdmin', x509Identity);
+        console.log('Successfully enrolled client user "patientAdmin" and imported it into the wallet');
 
     } catch (error) {
-        console.error(`Failed to enroll client user "${patientId}": ${error}`);
+        console.error(`Failed to enroll client user "patientAdmin": ${error}`);
         process.exit(1);
     }
 }

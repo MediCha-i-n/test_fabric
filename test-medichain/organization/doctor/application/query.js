@@ -22,10 +22,10 @@ const yaml = require('js-yaml');
 const { Wallets, Gateway } = require('fabric-network');
 
 // query program function
-async function query(doctorId, patientHash) {
+async function query(patientHash) {
 
     // A wallet stores a collection of identities for use
-    const wallet = await Wallets.newFileSystemWallet(`../identity/user/${doctorId}/wallet`);
+    const wallet = await Wallets.newFileSystemWallet('../identity/user/doctorAdmin/wallet');
 
     // A gateway defines the peers used to access Fabric networks
     const gateway = new Gateway();
@@ -40,7 +40,7 @@ async function query(doctorId, patientHash) {
 
         // Set connection options; identity and wallet
         let connectionOptions = {
-            identity: doctorId,
+            identity: 'doctorAdmin',
             wallet: wallet,
             discovery: { enabled:true, asLocalhost: true }
         };
@@ -78,8 +78,8 @@ async function query(doctorId, patientHash) {
     }
 }
 
-// Node 로 실행 시 인자값 - doctorId, patientHash
-query(process.argv[2], process.argv[3]).then(() => {
+// Node 로 실행 시 인자값 - patientHash
+query(process.argv[2]).then(() => {
     console.log('Query program complete.');
 }).catch((e) => {
     console.log('Query program exception.');

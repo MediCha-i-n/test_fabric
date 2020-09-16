@@ -22,10 +22,10 @@ const yaml = require('js-yaml');
 const { Wallets, Gateway } = require('fabric-network');
 
 // upload program function
-async function upload(doctorId, patientHash, rawImgCid, resultImgCid) {
+async function upload(doctorNumber, patientHash, rawImgCid, resultImgCid) {
 
     // A wallet stores a collection of identities for use
-    const wallet = await Wallets.newFileSystemWallet(`../identity/user/${doctorId}/wallet`);
+    const wallet = await Wallets.newFileSystemWallet('../identity/user/doctorAdmin/wallet');
 
     // A gateway defines the peers used to access Fabric networks
     const gateway = new Gateway();
@@ -33,13 +33,13 @@ async function upload(doctorId, patientHash, rawImgCid, resultImgCid) {
     // Main try/catch block
     try {
         // Specify userName for network access
-        // const userName = 'doctorId@doctor.com';
+        // const userName = 'doctor@doctor.com';
         // Load connection profile; will be used to locate a gateway
         let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org1.yaml', 'utf8'));
 
         // Set connection options; identity and wallet
         let connectionOptions = {
-            identity: doctorId,
+            identity: 'doctorAdmin',
             wallet: wallet,
             discovery: { enabled:true, asLocalhost: true }
         };
@@ -58,7 +58,7 @@ async function upload(doctorId, patientHash, rawImgCid, resultImgCid) {
 
         // upload medical data
         console.log('Submit medical data upload transaction.');
-        const uploadResponse = await contract.submitTransaction('UploadPatientHash', doctorId, patientHash, rawImgCid, resultImgCid);
+        const uploadResponse = await contract.submitTransaction('UploadPatientHash', doctorNumber, patientHash, rawImgCid, resultImgCid);
 
         // process response
         console.log('Process upload transaction response.' + uploadResponse);
@@ -77,7 +77,7 @@ async function upload(doctorId, patientHash, rawImgCid, resultImgCid) {
     return true;
 }
 
-// Node 로 실행 시 인자값 - doctorId, patientHash, rawImgCID, resultImgCID
+// Node 로 실행 시 인자값 - doctorNumber, patientHash, rawImgCID, resultImgCID
 upload(process.argv[2], process.argv[3], process.argv[4], process.argv[5]).then(() => {
     console.log('Upload program complete.');
 }).catch((e) => {

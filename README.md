@@ -122,16 +122,6 @@ docker-compose down -v
 
 Org1: Doctor, Org2: Patient
 
-enrollDoctor CA 관리자 아이디 등록
-```shell script
-node enrollUser.js id pw
-```
-
-addToDoctorWallet Client 아이디 등록
-```shell script
-node addToWallet.js id
-```
-
 체인코드 배포
 ```shell script
 # organization/doctor 에서
@@ -181,4 +171,60 @@ peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride o
 2020-09-15 02:23:44.196 KST [chaincodeCmd] ClientWait -> INFO 002 txid [d541cbd2075be1e0763b410bde42970825ae5ec19cd4df767d55ae5f51ca9121] committed with status (VALID) at localhost:9051
 
 peer chaincode query -C mychannel -n medichain -c '{"Args":["PatientHashExists","123"]}'
+```
+
+enrollUser CA 관리자 아이디 등록
+```shell script
+node enrollUser.js doctor or patient
+```
+
+addToWallet Client 아이디 등록
+```shell script
+node addToWallet.js doctor1_client or patient1_client
+```
+
+upload (doctor)
+```shell script
+node upload.js doctor patientHash1 rawcid resultcid
+```
+
+query (doctor)
+```shell script
+node query.js patient patientHash1
+```
+
+result
+```json
+[
+  {
+    Timestamp: { seconds: [Object], nanos: 948000000 },
+    Value: {
+      doctorID: 'doctor',
+      enrollNumber: 3,
+      patientHash: 'patientHash1',
+      rawImgCID: 'QmZEK63Z81aQ9oavNyV8xiDqT9YeuqY8kV8gUn1AeXb65r',
+      resultImgCID: 'QmXotXzaZ4s8BHEsWhXYAfVPkji3FNNCs6Xd9Ne4yH3cph'
+    }
+  },
+  {
+    Timestamp: { seconds: [Object], nanos: 134000000 },
+    Value: {
+      doctorID: 'doctor',
+      enrollNumber: 2,
+      patientHash: 'patientHash1',
+      rawImgCID: 'QmYdsKciEobSYvJXpmJUCnyF7s1otEBUQs8E97oHq8WJfw',
+      resultImgCID: 'QmbdqCVPxFqjxDtCBUhrfEQU11VQkrnatobedVFfHqKEgd'
+    }
+  },
+  {
+    Timestamp: { seconds: [Object], nanos: 45000000 },
+    Value: {
+      patientHash: 'patientHash1',
+      enrollNumber: 1,
+      doctorID: 'doctor',
+      rawImgCID: 'QmVWn1q82hNNJSttYgNAhhHE6iMdcTHS2VF6C2zTTbKg6o',
+      resultImgCID: 'QmeSSVxj2qozvTQAQWhnCcsq6J8HAUmTV14LvWrdRps8Wn'
+    }
+  }
+]
 ```

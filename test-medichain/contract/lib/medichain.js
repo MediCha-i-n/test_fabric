@@ -21,7 +21,7 @@ class Medichain extends Contract {
         let medicalData = {
             patientHash: patientHash,
             enrollNumber: 0,
-            doctorID: 0,  // 의사 번호
+            doctorNumber: 0,  // 의사 번호
             rawImgCID: '', // 원본이미지 CID
             resultImgCID: '', // 결과이미지 CID
         };
@@ -32,7 +32,7 @@ class Medichain extends Contract {
     }
 
     // Upload New Result
-    async UploadPatientHash(ctx, doctorID, patientHash, rawImgCID, resultImgCID) {
+    async UploadPatientHash(ctx, doctorNumber, patientHash, rawImgCID, resultImgCID) {
         let medicalDataAsBytes = await ctx.stub.getState(patientHash);
         if (!medicalDataAsBytes || !medicalDataAsBytes.toString()) {
             console.log(`Patient Hash ${patientHash} does not exist`);
@@ -48,7 +48,7 @@ class Medichain extends Contract {
             throw new Error(jsonResp);
         }
         medicalDataUpdate.enrollNumber += 1;
-        medicalDataUpdate.doctorID = doctorID;
+        medicalDataUpdate.doctorNumber = doctorNumber;
         medicalDataUpdate.rawImgCID = rawImgCID;
         medicalDataUpdate.resultImgCID = resultImgCID;
 
@@ -72,6 +72,7 @@ class Medichain extends Contract {
         while (!res.done) {
             if (res.value && res.value.value.toString()) {
                 let jsonRes = {};
+                console.log(res.value);
                 console.log(res.value.value.toString('utf8'));
                 if (isHistory && isHistory === true) {
                     jsonRes.TxId = res.value.tx_id;

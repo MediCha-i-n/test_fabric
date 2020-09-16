@@ -16,10 +16,10 @@ async function addipfs(filename){
     return false;
 }
 
-addipfs('./sampleImages/original/1.tif').then((result) => {
+addipfs('./sampleImages/original/3.tif').then((result) => {
     console.log(result);
 })
 
-addipfs('./sampleImages/ground-truth/1.tif').then((result) => {
+addipfs('./sampleImages/ground-truth/3.tif').then((result) => {
     console.log(result);
 })
