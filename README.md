@@ -113,7 +113,7 @@ cp -r test-network/organizations/ordererOrganizations docker-explorer/organizati
 cd docker-explorer
 vim connection-profile/first-network.json
 
-# 실행 - 8080 포트
+# 실행 - 8001 포트
 docker-compose up -d
 docker-compose down -v
 ```
