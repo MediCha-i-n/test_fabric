@@ -13,12 +13,12 @@ const path = require('path');
 
 const fixtures = path.resolve(__dirname, '../../../../test-network');
 
-async function main() {
+async function main(patientId) {
 
     // Main try/catch block
     try {
         // A wallet stores a collection of identities
-        const wallet = await Wallets.newFileSystemWallet('../identity/user/isabella/wallet');
+        const wallet = await Wallets.newFileSystemWallet(`../identity/user/${patientId}/wallet`);
 
         // Identity to credentials to be stored in the wallet
         const credPath = path.join(fixtures, '/organizations/peerOrganizations/org2.example.com/users/User1@org2.example.com');
@@ -26,7 +26,7 @@ async function main() {
         const privateKey = fs.readFileSync(path.join(credPath, '/msp/keystore/priv_sk')).toString();
 
         // Load credentials into wallet
-        const identityLabel = 'isabella';
+        const identityLabel = patientId;
 
         const identity = {
             credentials: {
@@ -37,7 +37,6 @@ async function main() {
             type: 'X.509'
         };
 
-
         await wallet.put(identityLabel,identity);
 
     } catch (error) {
@@ -46,7 +45,7 @@ async function main() {
     }
 }
 
-main().then(() => {
+main(process.argv[2]).then(() => {
     console.log('done');
 }).catch((e) => {
     console.log(e);

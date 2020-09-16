@@ -30,7 +30,7 @@ async function main(doctorId) {
         // Check to see if we've already enrolled the admin user.
         const userExists = await wallet.get(doctorId);
         if (userExists) {
-            console.log(`An identity for the client user "${doctorId}" already exists in the wallet`);
+            console.log('An identity for the client user "user1" already exists in the wallet');
             return;
         }
 

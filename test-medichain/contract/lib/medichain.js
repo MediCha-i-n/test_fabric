@@ -10,7 +10,7 @@ class Medichain extends Contract {
         return medicalDataState && medicalDataState.length > 0;
     }
 
-    // Create - create a new medical data
+    // Create - create a new patient hash
     async CreatePatientHash(ctx, patientHash) {
         const exists = await this.PatientHashExists(ctx, patientHash);
         if (exists) {
@@ -28,15 +28,17 @@ class Medichain extends Contract {
 
         // Save medical data to state
         await ctx.stub.putState(patientHash, Buffer.from(JSON.stringify(medicalData)));
+        return Buffer.from(JSON.stringify(medicalData));
     }
 
     // Upload New Result
-    async UploadPatientHash(ctx, patientHash, doctorID, rawImgCID, resultImgCID) {
+    async UploadPatientHash(ctx, doctorID, patientHash, rawImgCID, resultImgCID) {
         let medicalDataAsBytes = await ctx.stub.getState(patientHash);
         if (!medicalDataAsBytes || !medicalDataAsBytes.toString()) {
             console.log(`Patient Hash ${patientHash} does not exist`);
             medicalDataAsBytes = await this.CreatePatientHash(ctx, patientHash);
         }
+        console.log(medicalDataAsBytes);
         let medicalDataUpdate = {};
         try {
             medicalDataUpdate = JSON.parse(medicalDataAsBytes.toString());
@@ -52,17 +54,16 @@ class Medichain extends Contract {
 
         let medicalDataJSONasBytes = Buffer.from(JSON.stringify(medicalDataUpdate));
         await ctx.stub.putState(patientHash, medicalDataJSONasBytes);
+        return medicalDataUpdate;
     }
 
     async GetPatientHashHistory(ctx, patientHash) {
         const exists = await this.PatientHashExists(ctx, patientHash);
-        if (exists) {
-            throw new Error(`The patient ${patientHash} already exists`);
+        if (!exists) {
+            throw new Error(`Patient Hash ${patientHash} does not exist`);
         }
         let resultsIterator = await ctx.stub.getHistoryForKey(patientHash);
-        let results = await this.GetAllResults(resultsIterator, true);
-
-        return JSON.stringify(results);
+        return await this.GetAllResults(resultsIterator, true);
     }
 
     async GetAllResults(iterator, isHistory) {

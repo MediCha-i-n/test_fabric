@@ -8,9 +8,9 @@
  * This application has 6 basic steps:
  * 1. Select an identity from a wallet
  * 2. Connect to network gateway
- * 3. Access PaperNet network
- * 4. Construct request to issue commercial paper
- * 5. Submit transaction
+ * 3. Access Medichain Net network
+ * 4. Construct request to query medical data
+ * 5. Evaluate transaction
  * 6. Process response
  */
 
@@ -20,13 +20,12 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 const { Wallets, Gateway } = require('fabric-network');
-const CommercialPaper = require('../contract/lib/paper.js');
 
-// Main program function
-async function main() {
+// query program function
+async function query(patientId, patientHash) {
 
     // A wallet stores a collection of identities for use
-    const wallet = await Wallets.newFileSystemWallet('../identity/user/isabella/wallet');
+    const wallet = await Wallets.newFileSystemWallet(`../identity/user/${patientId}/wallet`);
 
     // A gateway defines the peers used to access Fabric networks
     const gateway = new Gateway();
@@ -35,69 +34,60 @@ async function main() {
     try {
 
         // Specify userName for network access
-        // const userName = 'isabella.issuer@patient.com';
-        const userName = 'isabella';
-
+        // const userName = 'patientId@doctor.com';
         // Load connection profile; will be used to locate a gateway
         let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org2.yaml', 'utf8'));
 
         // Set connection options; identity and wallet
         let connectionOptions = {
-            identity: userName,
+            identity: patientId,
             wallet: wallet,
             discovery: { enabled:true, asLocalhost: true }
         };
 
         // Connect to gateway using application specified parameters
         console.log('Connect to Fabric gateway.');
-
         await gateway.connect(connectionProfile, connectionOptions);
 
         // Access PaperNet network
         console.log('Use network channel: mychannel.');
-
         const network = await gateway.getNetwork('mychannel');
 
         // Get addressability to commercial paper contract
-        console.log('Use org.papernet.commercialpaper smart contract.');
+        console.log('Use org.medichainnet.medichain smart contract.');
+        const contract = await network.getContract('medichain');
 
-        const contract = await network.getContract('papercontract');
-
-        // issue commercial paper
-        console.log('Submit commercial paper issue transaction.');
-
-        const issueResponse = await contract.submitTransaction('issue', 'MagnetoCorp', '00001', '2020-05-31', '2020-11-30', '5000000');
+        // query medical data
+        console.log('Evaluate patientHash Data query transaction.');
+        const queryResponse = await contract.evaluateTransaction('GetPatientHashHistory', patientHash);
 
         // process response
-        console.log('Process issue transaction response.'+issueResponse);
+        console.log('Process query transaction response.' + queryResponse);
+        const queryData = JSON.parse(queryResponse.toString());
+        console.log(queryData);
 
-        let paper = CommercialPaper.fromBuffer(issueResponse);
-
-        console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully issued for value ${paper.faceValue}`);
         console.log('Transaction complete.');
-
+        return queryData;
     } catch (error) {
-
         console.log(`Error processing transaction. ${error}`);
         console.log(error.stack);
-
     } finally {
-
         // Disconnect from the gateway
         console.log('Disconnect from Fabric gateway.');
         gateway.disconnect();
-
     }
 }
-main().then(() => {
 
-    console.log('Issue program complete.');
-
+// Node 로 실행 시 인자값 - patientId, patientHash
+query(process.argv[2], process.argv[3]).then(() => {
+    console.log('Query program complete.');
 }).catch((e) => {
-
-    console.log('Issue program exception.');
+    console.log('Query program exception.');
     console.log(e);
     console.log(e.stack);
     process.exit(-1);
-
 });
+
+module.exports = {
+    query,
+};

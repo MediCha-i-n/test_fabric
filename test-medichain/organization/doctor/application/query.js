@@ -8,7 +8,7 @@
  * This application has 6 basic steps:
  * 1. Select an identity from a wallet
  * 2. Connect to network gateway
- * 3. Access MedichainNet network
+ * 3. Access Medichain Net network
  * 4. Construct request to query medical data
  * 5. Evaluate transaction
  * 6. Process response
@@ -67,7 +67,6 @@ async function query(doctorId, patientHash) {
         console.log(queryData);
 
         console.log('Transaction complete.');
-        // return data
         return queryData;
     } catch (error) {
         console.log(`Error processing transaction. ${error}`);

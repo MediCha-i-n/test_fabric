@@ -8,7 +8,7 @@
  * This application has 6 basic steps:
  * 1. Select an identity from a wallet
  * 2. Connect to network gateway
- * 3. Access MedichainNet network
+ * 3. Access Medichain Net network
  * 4. Construct request to upload medical data
  * 5. Submit transaction
  * 6. Process response
@@ -58,7 +58,7 @@ async function upload(doctorId, patientHash, rawImgCid, resultImgCid) {
 
         // upload medical data
         console.log('Submit medical data upload transaction.');
-        const uploadResponse = await contract.submitTransaction('UploadPatientHash', patientHash, doctorId, rawImgCid, resultImgCid);
+        const uploadResponse = await contract.submitTransaction('UploadPatientHash', doctorId, patientHash, rawImgCid, resultImgCid);
 
         // process response
         console.log('Process upload transaction response.' + uploadResponse);

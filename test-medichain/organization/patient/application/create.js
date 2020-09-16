@@ -8,7 +8,7 @@
  * This application has 6 basic steps:
  * 1. Select an identity from a wallet
  * 2. Connect to network gateway
- * 3. Access MedichainNet network
+ * 3. Access Medichain Net network
  * 4. Construct request to create medical data
  * 5. Submit transaction
  * 6. Process response
@@ -22,10 +22,10 @@ const yaml = require('js-yaml');
 const { Wallets, Gateway } = require('fabric-network');
 
 // create program function
-async function create(doctorId, patientHash) {
+async function create(patientId, patientHash) {
 
     // A wallet stores a collection of identities for use
-    const wallet = await Wallets.newFileSystemWallet(`../identity/user/${doctorId}/wallet`);
+    const wallet = await Wallets.newFileSystemWallet(`../identity/user/${patientId}/wallet`);
 
     // A gateway defines the peers used to access Fabric networks
     const gateway = new Gateway();
@@ -35,11 +35,11 @@ async function create(doctorId, patientHash) {
         // Specify userName for network access
         // const userName = 'doctorId@doctor.com';
         // Load connection profile; will be used to locate a gateway
-        let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org1.yaml', 'utf8'));
+        let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org2.yaml', 'utf8'));
 
         // Set connection options; identity and wallet
         let connectionOptions = {
-            identity: doctorId,
+            identity: patientId,
             wallet: wallet,
             discovery: { enabled:true, asLocalhost: true }
         };
@@ -58,11 +58,11 @@ async function create(doctorId, patientHash) {
 
         // upload medical data
         console.log('Submit medical data upload transaction.');
-        const uploadResponse = await contract.submitTransaction('CreatePatientHash', patientHash);
+        const createResponse = await contract.submitTransaction('CreatePatientHash', patientHash);
 
         // process response
-        console.log('Process upload transaction response.' + uploadResponse);
-        let patientData = Buffer.from(JSON.stringify(uploadResponse));
+        console.log('Process create transaction response.' + createResponse);
+        let patientData = Buffer.from(JSON.stringify(createResponse));
 
         console.log(patientData);
         console.log('Transaction complete.');
@@ -77,11 +77,11 @@ async function create(doctorId, patientHash) {
     return true;
 }
 
-// Node 로 실행 시 인자값 - doctorId, patientHash
+// Node 로 실행 시 인자값 - patientId, patientHash
 create(process.argv[2], process.argv[3]).then(() => {
-    console.log('Upload program complete.');
+    console.log('Create program complete.');
 }).catch((e) => {
-    console.log('Upload program exception.');
+    console.log('Create program exception.');
     console.log(e);
     console.log(e.stack);
     process.exit(-1);
