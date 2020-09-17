@@ -175,22 +175,22 @@ peer chaincode query -C mychannel -n medichain -c '{"Args":["PatientHashExists",
 
 enrollUser CA 관리자 아이디 등록
 ```shell script
-node enrollUser.js doctor or patient
+node enrollUser.js
 ```
 
 addToWallet Client 아이디 등록
 ```shell script
-node addToWallet.js doctor1_client or patient1_client
+node addToWallet.js
 ```
 
 upload (doctor)
 ```shell script
-node upload.js doctor patientHash1 rawcid resultcid
+node upload.js doctor1 patientHash1 rawcid resultcid
 ```
 
 query (doctor)
 ```shell script
-node query.js patient patientHash1
+node query.js patientHash1
 ```
 
 result
