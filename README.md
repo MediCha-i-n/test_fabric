@@ -228,3 +228,8 @@ result
   }
 ]
 ```
+
+외부로 파일 가져오기 (ssh 이용)
+```shell script
+scp {user}@{server ip}:{dir 절대경로} {받는 곳 절대 경로}
+```

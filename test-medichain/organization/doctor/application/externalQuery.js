@@ -9,8 +9,8 @@
  * 1. Select an identity from a wallet
  * 2. Connect to network gateway
  * 3. Access Medichain Net network
- * 4. Construct request to create medical data
- * 5. Submit transaction
+ * 4. Construct request to query medical data
+ * 5. Evaluate transaction
  * 6. Process response
  */
 
@@ -21,27 +21,28 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const { Wallets, Gateway } = require('fabric-network');
 
-// create program function
-async function create(patientHash) {
+// query program function
+async function query(patientHash) {
 
     // A wallet stores a collection of identities for use
-    const wallet = await Wallets.newFileSystemWallet('../identity/user/patientAdmin/wallet');
+    const wallet = await Wallets.newFileSystemWallet('../identity/user/doctorAdmin/wallet');
 
     // A gateway defines the peers used to access Fabric networks
     const gateway = new Gateway();
 
     // Main try/catch block
     try {
+
         // Specify userName for network access
         // const userName = 'doctorId@doctor.com';
         // Load connection profile; will be used to locate a gateway
-        let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org2.yaml', 'utf8'));
+        let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org1.yaml', 'utf8'));
 
         // Set connection options; identity and wallet
         let connectionOptions = {
-            identity: 'patientAdmin',
+            identity: 'doctorAdmin',
             wallet: wallet,
-            discovery: { enabled:true, asLocalhost: true }
+            discovery: { enabled: true, asLocalhost: false }
         };
 
         // Connect to gateway using application specified parameters
@@ -56,16 +57,17 @@ async function create(patientHash) {
         console.log('Use org.medichainnet.medichain smart contract.');
         const contract = await network.getContract('medichain');
 
-        // upload medical data
-        console.log('Submit patient data upload transaction.');
-        const createResponse = await contract.submitTransaction('CreatePatientHash', patientHash);
+        // query medical data
+        console.log('Evaluate patientHash Data query transaction.');
+        const queryResponse = await contract.evaluateTransaction('GetPatientHashHistory', patientHash);
 
         // process response
-        console.log('Process create transaction response.' + createResponse);
-        let patientData = Buffer.from(JSON.stringify(createResponse));
+        console.log('Process query transaction response.' + queryResponse);
+        const queryData = JSON.parse(queryResponse.toString());
+        console.log(queryData);
 
-        console.log(patientData);
         console.log('Transaction complete.');
+        return queryData;
     } catch (error) {
         console.log(`Error processing transaction. ${error}`);
         console.log(error.stack);
@@ -74,19 +76,18 @@ async function create(patientHash) {
         console.log('Disconnect from Fabric gateway.');
         gateway.disconnect();
     }
-    return true;
 }
 
 // Node 로 실행 시 인자값 - patientHash
-create(process.argv[2]).then(() => {
-    console.log('Create program complete.');
+query('test1').then(() => {
+    console.log('Query program complete.');
 }).catch((e) => {
-    console.log('Create program exception.');
+    console.log('Query program exception.');
     console.log(e);
     console.log(e.stack);
     process.exit(-1);
 });
 
 module.exports = {
-    create,
+    query,
 };

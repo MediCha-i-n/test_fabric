@@ -17,3 +17,5 @@ sudo apt-get install -y docker-ce
 
 sudo curl -L https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+
+# git, curl, docker, docker-compose 다운로드
