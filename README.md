@@ -229,7 +229,19 @@ result
 ]
 ```
 
-외부로 파일 가져오기 (ssh 이용)
+- 외부로 파일 가져오기 (ssh 이용)
 ```shell script
 scp {user}@{server ip}:{dir 절대경로} {받는 곳 절대 경로}
+```
+
+- Host 변경 (orderer.example.com / peer0.org1.example.com / peer0.org2.example.com 모두)을 통해 외부에서 접근 가능
+
+Ubuntu의 경우
+```shell script
+sudo vim /etc/hosts
+```
+
+Window 의 경우
+```shell script
+Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "{ip}`t{host name}" -Force
 ```
