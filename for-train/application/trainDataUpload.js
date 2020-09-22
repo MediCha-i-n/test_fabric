@@ -55,7 +55,7 @@ async function mainUpload() {
                 const truthCID = await addIPFS(onePath[1]);
 
                 console.log('Submit medical data upload transaction.');
-                const response = await contract.submitTransaction('UploadPatientHash', 0, `trainer ${idx + 1}`, originCID.path, truthCID.path);
+                const response = await contract.submitTransaction('UploadPatientHash', 0, `trainer ${parseInt(idx, 10) + 1}`, originCID.path, truthCID.path);
 
                 // process response
                 console.log('Process upload transaction response.');
