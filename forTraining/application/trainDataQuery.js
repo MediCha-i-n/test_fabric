@@ -7,8 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const { Wallets, Gateway } = require('fabric-network');
 
-// query program function
 async function mainQuery(patientHash) {
+    const promises = [];
 
     // A wallet stores a collection of identities for use
     const wallet = await Wallets.newFileSystemWallet('../identity/user/training/wallet');
@@ -25,13 +25,18 @@ async function mainQuery(patientHash) {
         const queryResponse = await contract.evaluateTransaction('GetPatientHashHistory', patientHash);
 
         // process response
-        console.log('Process query transaction response.' + queryResponse);
+        console.log('Process query transaction response.');
         const queryData = JSON.parse(queryResponse.toString());
-        console.log(queryData);
-
         console.log('Transaction complete.');
-        return queryData;
 
+        for (const oneData of queryData) {
+            const value = oneData.Value;
+            await getIPFS(value.rawImgCID, path.join(__dirname, `../result/Origin/${value.patientHash}-${value.enrollNumber}.tif`));
+            await getIPFS(value.resultImgCID, path.join(__dirname, `../result/Truth/${value.patientHash}-${value.enrollNumber}.tif`));
+            break;
+        }
+        return;
+        // return await Promise.all(promises);
     } catch (error) {
         console.log(`Error processing transaction. ${error}`);
         console.log(error.stack);

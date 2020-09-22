@@ -38,7 +38,6 @@ class Medichain extends Contract {
             console.log(`Patient Hash ${patientHash} does not exist`);
             medicalDataAsBytes = await this.CreatePatientHash(ctx, patientHash);
         }
-        console.log(medicalDataAsBytes);
         let medicalDataUpdate = {};
         try {
             medicalDataUpdate = JSON.parse(medicalDataAsBytes.toString());
@@ -72,7 +71,6 @@ class Medichain extends Contract {
         while (!res.done) {
             if (res.value && res.value.value.toString()) {
                 let jsonRes = {};
-                console.log(res.value);
                 console.log(res.value.value.toString('utf8'));
                 if (isHistory && isHistory === true) {
                     jsonRes.TxId = res.value.tx_id;

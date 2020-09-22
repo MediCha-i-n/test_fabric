@@ -2,10 +2,7 @@
   "name": "nodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "buy.js",
-  "scripts": {
-    "test": "rm -rf _idwallet && node addToWallet.js && node buy.js"
-  },
+  "main": "index.js",
   "keywords": [],
   "author": "",
   "license": "Apache-2.0",
