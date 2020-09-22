@@ -29,7 +29,7 @@ async function mainQuery(patientHash) {
         console.log('Transaction complete.');
 
         for (const oneData of queryData) {
-            if (oneData.value) {
+            if (oneData.Value) {
                 const value = oneData.Value;
                 if (value.rawImgCID && value.resultImgCID) {
                     promises.push(getIPFS(value.rawImgCID, path.join(__dirname, `../result/Origin/${value.patientHash}-${value.enrollNumber}.tif`)));
@@ -49,7 +49,7 @@ async function mainQuery(patientHash) {
     }
 }
 
-mainQuery('trainer 1')
+mainQuery('trainer 3')
     .then((result) => {
         console.log(result);
     })
