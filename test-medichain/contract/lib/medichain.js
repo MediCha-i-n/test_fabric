@@ -73,7 +73,7 @@ class Medichain extends Contract {
                 let jsonRes = {};
                 console.log(res.value.value.toString('utf8'));
                 if (isHistory && isHistory === true) {
-                    jsonRes.TxId = res.value.tx_id;
+                    jsonRes.TxId = res.value.txId;
                     jsonRes.Timestamp = res.value.timestamp;
                     try {
                         jsonRes.Value = JSON.parse(res.value.value.toString('utf8'));

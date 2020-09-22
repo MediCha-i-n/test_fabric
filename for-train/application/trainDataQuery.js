@@ -3,7 +3,6 @@
 const { getIPFS } = require('./imgGetter');
 const { connectChain } = require('./externalConnect');
 
-const fs = require('fs');
 const path = require('path');
 const { Wallets, Gateway } = require('fabric-network');
 
@@ -30,13 +29,16 @@ async function mainQuery(patientHash) {
         console.log('Transaction complete.');
 
         for (const oneData of queryData) {
-            const value = oneData.Value;
-            await getIPFS(value.rawImgCID, path.join(__dirname, `../result/Origin/${value.patientHash}-${value.enrollNumber}.tif`));
-            await getIPFS(value.resultImgCID, path.join(__dirname, `../result/Truth/${value.patientHash}-${value.enrollNumber}.tif`));
-            break;
+            if (oneData.value) {
+                const value = oneData.Value;
+                if (value.rawImgCID && value.resultImgCID) {
+                    promises.push(getIPFS(value.rawImgCID, path.join(__dirname, `../result/Origin/${value.patientHash}-${value.enrollNumber}.tif`)));
+                    promises.push(getIPFS(value.resultImgCID, path.join(__dirname, `../result/Truth/${value.patientHash}-${value.enrollNumber}.tif`)));
+                }
+            }
         }
-        return;
-        // return await Promise.all(promises);
+
+        return await Promise.all(promises);
     } catch (error) {
         console.log(`Error processing transaction. ${error}`);
         console.log(error.stack);
@@ -47,7 +49,7 @@ async function mainQuery(patientHash) {
     }
 }
 
-mainQuery('train0')
+mainQuery('trainer 1')
     .then((result) => {
         console.log(result);
     })
