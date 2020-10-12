@@ -33,7 +33,7 @@ async function create(patientHash) {
     // Main try/catch block
     try {
         // Specify userName for network access
-        // const userName = 'doctorId@doctor.com';
+        // const userName = 'patientId@patient.com';
         // Load connection profile; will be used to locate a gateway
         let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org2.yaml', 'utf8'));
 
