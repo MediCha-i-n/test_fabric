@@ -106,7 +106,7 @@ wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/ex
 wget https://raw.githubusercontent.com/hyperledger/blockchain-explorer/master/docker-compose.yaml
 
 # 네트워크 실행 후 (test_fabric 에서)
-cd docker-explorer & mkdir organization
+cd docker-explorer & mkdir organizations
 cp -r test-network/organizations/peerOrganizations docker-explorer/organizations
 cp -r test-network/organizations/ordererOrganizations docker-explorer/organizations
 
