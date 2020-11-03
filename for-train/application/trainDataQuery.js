@@ -49,7 +49,7 @@ async function mainQuery(patientHash) {
     }
 }
 
-mainQuery('trainer 3')
+mainQuery(process.argv[2])
     .then((result) => {
         console.log(result);
     })
