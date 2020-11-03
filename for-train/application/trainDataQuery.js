@@ -32,8 +32,8 @@ async function mainQuery(patientHash) {
             if (oneData.Value) {
                 const value = oneData.Value;
                 if (value.rawImgCID && value.resultImgCID) {
-                    promises.push(getIPFS(value.rawImgCID, path.join(__dirname, `../result/Origin/${value.patientHash}-${value.enrollNumber}.tif`)));
-                    promises.push(getIPFS(value.resultImgCID, path.join(__dirname, `../result/Truth/${value.patientHash}-${value.enrollNumber}.tif`)));
+                    promises.push(getIPFS(value.rawImgCID));
+                    promises.push(getIPFS(value.resultImgCID));
                 }
             }
         }
