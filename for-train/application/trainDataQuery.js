@@ -52,6 +52,7 @@ async function mainQuery(patientHash) {
 mainQuery(process.argv[2])
     .then((result) => {
         console.log(result);
+        return result;
     })
     .catch((err) => {
         console.error(err.message);
