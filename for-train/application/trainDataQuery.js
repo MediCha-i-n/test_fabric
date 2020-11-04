@@ -3,7 +3,6 @@
 const { getIPFS } = require('./imgGetter');
 const { connectChain } = require('./externalConnect');
 
-const path = require('path');
 const { Wallets, Gateway } = require('fabric-network');
 
 async function mainQuery(patientHash) {
