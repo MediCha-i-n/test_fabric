@@ -30,6 +30,16 @@ async function connectChain(gateway, wallet) {
         // Access PaperNet network
         console.log('Use network channel: mychannel.');
         const network = await gateway.getNetwork('mychannel');
+        /* await network.addBlockListener(
+            async (err, blockNum, block) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                console.log(blockNum, blockNum.blockData);
+                console.log(block);
+            }
+        ); */
 
         // Get addressability to commercial paper contract
         console.log('Use org.medichainnet.medichain smart contract.');

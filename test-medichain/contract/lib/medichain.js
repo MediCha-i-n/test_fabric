@@ -19,7 +19,7 @@ class Medichain extends Contract {
 
         // Create Medical Data object and marshal to JSON
         let medicalData = {
-            patientHash: patientHash,
+            patientHash: patientHash || 'unknown',
             enrollNumber: 0,
             doctorNumber: 0,  // 의사 번호
             rawImgCID: '', // 원본이미지 CID
@@ -54,6 +54,36 @@ class Medichain extends Contract {
         let medicalDataJSONasBytes = Buffer.from(JSON.stringify(medicalDataUpdate));
         await ctx.stub.putState(patientHash, medicalDataJSONasBytes);
         return medicalDataUpdate;
+    }
+
+    async GetPatientHashCurrent(ctx, patientHash) {
+        const exists = await this.PatientHashExists(ctx, patientHash);
+        if (!exists) {
+            throw new Error(`Patient Hash ${patientHash} does not exist`);
+        }
+        return await ctx.stub.getState(patientHash);
+    }
+
+    async GetAllPatientHashCurrent(ctx) {
+        const allResults = [];
+        const iterator = await ctx.stub.getStateByRange('', '');
+        let result = await iterator.next();
+        while (!result.done) {
+            if (result.value && result.value.value.toString()) {
+                let jsonResult = {};
+                console.log(result.value.value.toString('utf8'));
+                jsonResult.Key = result.value.key;
+                try {
+                    jsonResult.Record = JSON.parse(result.value.value.toString('utf8'));
+                } catch (err) {
+                    console.log(err);
+                    jsonResult.Record = result.value.value.toString('utf8');
+                }
+                allResults.push(jsonResult);
+            }
+            result = await iterator.next();
+        }
+        return JSON.stringify(allResults);
     }
 
     async GetPatientHashHistory(ctx, patientHash) {
