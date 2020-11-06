@@ -1,4 +1,3 @@
-const fs = require('fs');
 const IpfsHttpClient = require('ipfs-http-client')
 
 const ipfs = IpfsHttpClient()

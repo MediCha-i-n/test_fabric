@@ -7,6 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const { Wallets, Gateway } = require('fabric-network');
 
+const targetDirArr = ['CVC-ClinicDB', 'CVC-ColonDB', 'ETIS-LaribPolypDB'];
+
 function getImgSetPath(targetDir) {
     const pathSet = [];
 
@@ -27,43 +29,34 @@ function getImgSetPath(targetDir) {
     return pathSet;
 }
 
-async function mainUpload() {
-    const targetDirArr = ['CVC-ClinicDB', 'CVC-ColonDB', 'ETIS-LaribPolypDB'];
-    const imgPathObject = {};
+async function mainUpload(trainerNumber) {
+    const targetDir = targetDirArr[trainerNumber-1];
     const results = [];
 
-    // pathSet Create
-    for (const targetDir of targetDirArr) {
-        imgPathObject[targetDir] = getImgSetPath(targetDir);
-    }
-
     // A wallet stores a collection of identities for use
-    const wallet = await Wallets.newFileSystemWallet('../identity/user/training/wallet');
+    const wallet = await Wallets.newFileSystemWallet(`../identity/user/trainer${trainerNumber}/wallet`);
 
     // A gateway defines the peers used to access Fabric networks
     const gateway = new Gateway();
 
     // Main try/catch block
     try {
-        const contract = await connectChain(gateway, wallet);
+        const contract = await connectChain(gateway, wallet, `trainer${trainerNumber}`);
 
-        for (const idx in targetDirArr) {
-            const targetDir = targetDirArr[idx];
-            const pathSet = imgPathObject[targetDir];
-            for (const onePath of pathSet) {
-                const originCID = await addIPFS(onePath[0]);
-                const truthCID = await addIPFS(onePath[1]);
+        const pathSet = getImgSetPath(targetDir);
+        for (const onePath of pathSet) {
+            const originCID = await addIPFS(onePath[0]);
+            const truthCID = await addIPFS(onePath[1]);
 
-                console.log('Submit medical data upload transaction.');
-                const response = await contract.submitTransaction('UploadPatientHash', 0, `trainer ${parseInt(idx, 10) + 1}`, originCID.path, truthCID.path);
+            console.log('Submit medical data upload transaction.');
+            const response = await contract.submitTransaction('UploadPatientHash', 0, `trainer${trainerNumber}`, originCID.path, truthCID.path);
 
-                // process response
-                console.log('Process upload transaction response.');
-                const data = Buffer.from(JSON.stringify(response));
-                results.push(data);
+            // process response
+            console.log('Process upload transaction response.');
+            const data = Buffer.from(JSON.stringify(response));
+            results.push(data);
 
-                console.log('Transaction complete.');
-            }
+            console.log('Transaction complete.');
         }
         return results;
 
@@ -77,7 +70,7 @@ async function mainUpload() {
     }
 }
 
-mainUpload()
+mainUpload(process.argv[2])
     .then((result) => {
         console.log(result);
     })

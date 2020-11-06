@@ -9,7 +9,7 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-async function connectChain(gateway, wallet) {
+async function connectChain(gateway, wallet, trainerName) {
     try {
         // Specify userName for network access
         // const userName = 'training@doctor.com';
@@ -18,7 +18,7 @@ async function connectChain(gateway, wallet) {
 
         // Set connection options; identity and wallet
         let connectionOptions = {
-            identity: 'training',
+            identity: trainerName,
             wallet: wallet,
             discovery: { enabled: true, asLocalhost: false }
         };
@@ -30,16 +30,14 @@ async function connectChain(gateway, wallet) {
         // Access PaperNet network
         console.log('Use network channel: mychannel.');
         const network = await gateway.getNetwork('mychannel');
-        /* await network.addBlockListener(
+        await network.addBlockListener(
             async (err, blockNum, block) => {
                 if (err) {
                     console.error(err);
                     return;
                 }
-                console.log(blockNum, blockNum.blockData);
-                console.log(block);
             }
-        ); */
+        );
 
         // Get addressability to commercial paper contract
         console.log('Use org.medichainnet.medichain smart contract.');
