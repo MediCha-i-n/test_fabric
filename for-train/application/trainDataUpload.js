@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { Wallets, Gateway } = require('fabric-network');
 
-const targetDirArr = ['CVC-ClinicDB', 'CVC-ColonDB', 'ETIS-LaribPolypDB'];
+const targetDirArr = ['CVC-ColonDB', 'ETIS-LaribPolypDB', 'Kvasir-SEG'];
 
 function getImgSetPath(targetDir) {
     const pathSet = [];

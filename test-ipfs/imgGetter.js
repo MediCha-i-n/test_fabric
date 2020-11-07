@@ -5,7 +5,6 @@ const ipfs = IpfsHttpClient()
 
 async function getipfs(cid, filename){
     for await (const file of ipfs.get(cid)) {
-        console.log(file);
         if (!file.content) continue;
 
         const content = []
@@ -21,8 +20,12 @@ async function getipfs(cid, filename){
     }
 }
 
-const cidRaw = 'QmVWn1q82hNNJSttYgNAhhHE6iMdcTHS2VF6C2zTTbKg6o';
-const cidResult = 'QmeSSVxj2qozvTQAQWhnCcsq6J8HAUmTV14LvWrdRps8Wn';
+const cidOrigin = 'QmXotXzaZ4s8BHEsWhXYAfVPkji3FNNCs6Xd9Ne4yH3cph';
+const cidTruth = 'QmZEK63Z81aQ9oavNyV8xiDqT9YeuqY8kV8gUn1AeXb65r';
 
-getipfs(cidRaw, './result/ipfs_raw.tif').then(console.log);
-getipfs(cidResult, './result/ipfs_origin.tif').then(console.log);
+getipfs(cidOrigin, './ipfs_origin.tif').then((result) => {
+    console.log(result.toString('base64'));
+});
+getipfs(cidTruth, './ipfs_truth.tif').then((result) => {
+    console.log(result.toString('base64'));
+});
