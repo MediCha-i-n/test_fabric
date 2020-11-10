@@ -2,7 +2,6 @@
 
 const { getIPFS } = require('./imgGetter');
 const { connectChain } = require('./externalConnect');
-const util = require('util');
 
 const { Wallets, Gateway } = require('fabric-network');
 
