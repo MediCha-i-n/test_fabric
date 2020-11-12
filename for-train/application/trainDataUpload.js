@@ -34,7 +34,7 @@ async function mainUpload(trainerNumber) {
     const results = [];
 
     // A wallet stores a collection of identities for use
-    const wallet = await Wallets.newFileSystemWallet(`../identity/user/trainer${trainerNumber}/wallet`);
+    const wallet = await Wallets.newFileSystemWallet(path.join(__dirname, `../identity/user/trainer${trainerNumber}/wallet`));
 
     // A gateway defines the peers used to access Fabric networks
     const gateway = new Gateway();
