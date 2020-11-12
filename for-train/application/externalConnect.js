@@ -8,13 +8,14 @@
 
 const fs = require('fs');
 const yaml = require('js-yaml');
+const path = require('path');
 
 async function connectChain(gateway, wallet, trainerName) {
     try {
         // Specify userName for network access
         // const userName = 'training@doctor.com';
         // Load connection profile; will be used to locate a gateway
-        let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/connection-org1.yaml'), 'utf8');
+        let connectionProfile = yaml.safeLoad(path.join(__dirname, fs.readFileSync('../gateway/connection-org1.yaml')), 'utf8');
 
         // Set connection options; identity and wallet
         let connectionOptions = {

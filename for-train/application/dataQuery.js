@@ -4,11 +4,12 @@ const { getIPFS } = require('./imgGetter');
 const { connectChain } = require('./externalConnect');
 
 const { Wallets, Gateway } = require('fabric-network');
+const path = require('path');
 
 async function mainQuery(trainerName) {
     const result = ['', ''];
     // A wallet stores a collection of identities for use
-    const wallet = await Wallets.newFileSystemWallet(`../identity/user/${trainerName}/wallet`);
+    const wallet = await Wallets.newFileSystemWallet(path.join(__dirname, `../identity/user/${trainerName}/wallet`));
 
     // A gateway defines the peers used to access Fabric networks
     const gateway = new Gateway();
@@ -32,13 +33,11 @@ async function mainQuery(trainerName) {
                 if (value.rawImgCID && value.resultImgCID) {
                     const originBuf = await getIPFS(value.rawImgCID);
                     const truthBuf = await getIPFS(value.resultImgCID);
-                    result[0] += originBuf.toString('base64') + '\n';
-                    result[1] += truthBuf.toString('base64') + '\n';
+                    console.log(originBuf.toString('base64'));
+                    console.log(truthBuf.toString('base64'));
                 }
             }
         }
-	console.log(result[0].length)
-	console.log(result[1].length)
         return result;
     } catch (error) {
         console.log(`Error processing transaction. ${error}`);
@@ -52,7 +51,6 @@ async function mainQuery(trainerName) {
 
 mainQuery(process.argv[2])
     .then((result) => {
-        console.log(result);
         return result;
     })
     .catch((err) => {
