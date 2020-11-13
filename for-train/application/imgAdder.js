@@ -3,7 +3,9 @@
 const fs = require('fs');
 const IpfsHttpClient = require('ipfs-http-client');  // need a IPFS Daemon
 
-const ipfs = IpfsHttpClient();
+const ipfs = IpfsHttpClient({
+	port:4000
+});
 
 async function addIPFS(filename){
     const addOptions = {

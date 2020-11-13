@@ -1,6 +1,8 @@
 const IpfsHttpClient = require('ipfs-http-client')
 
-const ipfs = IpfsHttpClient()
+const ipfs = IpfsHttpClient({
+	port:4000
+});
 
 async function getIPFS(cid){
     for await (const file of ipfs.get(cid)) {
