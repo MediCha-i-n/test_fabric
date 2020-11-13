@@ -3,11 +3,12 @@
 const { connectChain } = require('./externalConnect');
 
 const { Wallets, Gateway } = require('fabric-network');
+const path = require('path');
 
 async function getTotalCount(trainerName) {
     let count = 0;
     // A wallet stores a collection of identities for use
-    const wallet = await Wallets.newFileSystemWallet(`../identity/user/${trainerName}/wallet`);
+    const wallet = await Wallets.newFileSystemWallet(path.join(__dirname, `../identity/user/${trainerName}/wallet`));
 
     // A gateway defines the peers used to access Fabric networks
     const gateway = new Gateway();
